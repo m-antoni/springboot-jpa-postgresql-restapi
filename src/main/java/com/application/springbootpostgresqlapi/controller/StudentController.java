@@ -3,9 +3,7 @@ package com.application.springbootpostgresqlapi.controller;
 import com.application.springbootpostgresqlapi.model.Student;
 import com.application.springbootpostgresqlapi.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,5 +23,19 @@ public class StudentController {
         return studentService.getStudents();
     }
 
+    @PostMapping
+    public void createStudent(@RequestBody Student student){
+        studentService.createStudent(student);
+    }
+
+    @DeleteMapping(path = "{id}")
+    public void deleteStudent(@PathVariable("id") Long id){
+        studentService.deleteStudent(id);
+    }
+
+    @PutMapping(path = "{id}")
+    public void updateStudent(@PathVariable("id") Long id, @RequestBody Student student){
+        studentService.updateStudent(id, student);
+    }
 
 }

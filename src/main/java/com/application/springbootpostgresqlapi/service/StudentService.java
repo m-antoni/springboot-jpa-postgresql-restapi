@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -19,20 +21,41 @@ public class StudentService {
     }
 
     public List<Student> getStudents(){
-        return studentRepository.findAll();
-//        return List.of(
-//                new Student(
-//                        1L,
-//                        "Michael Antoni",
-//                        32, "michaelantoni.cs@gmail.com",
-//                        LocalDate.of(1989, 02, 21)
-//                ),
-//                new Student(
-//                        1L,
-//                        "Sebastian Noah Antoni",
-//                        1, "sebastian@gmail.com",
-//                        LocalDate.of(2020, 04, 30)
-//                )
-//        );
+
+        List<Student> students = new ArrayList<>();
+
+        studentRepository.findAll().forEach(students::add);
+
+        return students;
+    }
+
+    public void createStudent(Student student) {
+
+        Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
+
+        if(studentOptional.isPresent()){
+            throw new IllegalStateException("Email is already taken !!!");
+        }
+
+        studentRepository.save(student);
+    }
+
+    public void deleteStudent(Long id) {
+        boolean exist = studentRepository.existsById(id);
+        if(!exist){
+            throw new IllegalStateException("student id: " + id + " does not exist");
+        }
+        studentRepository.deleteById(id);
+    }
+
+    public void updateStudent(Long id, Student student) {
+       Student studentExist = studentRepository.findById(id).orElseThrow(() -> new IllegalStateException("student id: " + id + " does not exist"));
+
+       studentExist.setName(student.getName());
+       studentExist.setAge(student.getAge());
+       studentExist.setDob(student.getDob());
+       studentExist.setEmail(student.getEmail());  // should add validation for email
+
+       studentRepository.save(studentExist);
     }
 }
