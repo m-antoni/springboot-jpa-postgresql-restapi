@@ -29,6 +29,16 @@ public class StudentService {
         return students;
     }
 
+    public Optional<Student> getSingleStudent(Long id) {
+        boolean exist = studentRepository.existsById(id);
+
+        if(!exist){
+            throw new IllegalStateException("Student id: " + id + " does not exist");
+        }
+
+        return studentRepository.findById(id);
+    }
+
     public void createStudent(Student student) {
 
         Optional<Student> studentOptional = studentRepository.findStudentByEmail(student.getEmail());
